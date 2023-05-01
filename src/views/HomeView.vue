@@ -5,13 +5,14 @@
       <button @click=" this.clear() ">Limpar</button>
       <button @click=" this.main() ">Analizar</button>
     </div>
-    <textarea name="results" id="results" cols="50" rows="10"></textarea>
+    <textarea name="results" id="results" ></textarea>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue'
+import {updateExpressionWithTypeArguments} from 'typescript'
 
 export default {
   name: 'HomeView',
@@ -54,6 +55,7 @@ export default {
         if(!this.endSentence.includes(token.charAt(i))){
           sentenca +=  token[i];
         }else{
+          sentenca +=  token[i];
           sentenca+= '$';
           sentencas.push(sentenca);
           sentenca = ''; 
@@ -61,8 +63,21 @@ export default {
       }
       return sentencas;
     },
+    inAlfhabeth: function(sentenca){
+          
+      for(let i = 0; i < sentenca.length - 1 ; i++  ){
+        if (!this.alfabeto.includes(sentenca[i])) {
+          // resposta = `Sentenca Invalida - Simbulo Invalido: ${sentenca}`
+          return false;
+        }
+      }
+      return true;
+      
+    },
+
     main:function(){
       console.clear();
+      console.log(this.tabelaT[2][3])
       const input = document.getElementById('input');
       const results = document.getElementById('results');
       let toke = input.value;
@@ -70,10 +85,21 @@ export default {
       const token = toke + "$";
       const sentencas = this.getSentencas(token);
       console.log(sentencas);
+      
+      for (let i = 0 ; i < sentencas.length ; i++) {
+        if(!this.inAlfhabeth(sentencas[i])){
+          results.value += `ERRO - Simbulo Invalido: ${sentencas[i]}\n`
+        }
+
+
+
+
+      }
+
     
       // console.log(retornos)
 
-      results.value += token
+      // results.value += token
     },
     clear:function(){
       document.getElementById('input').value = '';
@@ -98,12 +124,21 @@ export default {
 .boxButton{
 
 }
+
+#results {
+  width: 100%;
+  min-height: 400px ;
+  background-color: rgb(251, 218, 175);
+  margin-top: 10px;
+}
 .Input{
   width: 400px;
   height: 50px;
   border-radius: 20px;
-  border: 2px solid black;
-  font: black ;
+  border: 2px solid rgb(68, 48, 48);
+  font: rgb(0, 0, 0) ;
+  background-color: rgb(251, 218, 175);
+  margin-bottom: 10px;
 }
 
 </style>
