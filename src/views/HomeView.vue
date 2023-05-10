@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <input id="input" placeholder="digite o codigo aqui: " value="+ccccc dedede t" class="Input">
+    <input id="input" placeholder="digite o codigo aqui: " class="Input">
     <div class="boxButton">
       <button @click=" this.clear()">Limpar</button>
       <button @click=" this.main()">Analizar</button>
@@ -60,24 +60,29 @@ export default {
       let sentencas = [];
       let sentenca = '';
       
-      for (let i = 0; i < token.length; i++) {
-        if(this.separadores.includes(token[i])){
-            console.log('ta no else',token[i]);
+      for (const element of token) {
+        // console.log(token[i])
+        if(this.separadores.includes(element)){
+          // if (token[i] !== ' '){
+            console.log('ta no else',element);
 
-            console.log(token[i]);
-            sentenca +=  token[i];
+            console.log(element);
+            sentenca +=  element;
+            // sentenca += '$';
             sentencas.push(sentenca);
             sentenca = ''; 
+          // }
         }else{
-          sentenca +=  token[i]
+          sentenca +=  element
         }
       }
       return sentencas;
     },
-    inAlfhabeth: function ( sentenca ) {
+    inAlfhabeth: function(sentenca){
       sentenca = sentenca.trim();
       console.log('ta no alfabeto', sentenca, sentenca.length)
       for(let i = 0; i <= sentenca.length - 1 ; i++  ){
+        // console.log('nao ta  sentenca')
         if(sentenca[i]!=='$'){
           if (!this.alfabeto.includes(sentenca[i])) {
             console.log('nao ta no alfabeto', sentenca)
@@ -87,32 +92,39 @@ export default {
       }
       return true;
     },
-    generic: function ( sentencas ) {
+    generic: function(sentencas){
       const results = document.getElementById('results');
       let estado = 2;
+      let invalidSimbol = false;
+      let aritmethicSimbol = false;
       for (const element of sentencas) {
+        // console.log('ta no for')
         if(this.inAlfhabeth(element)){
-
+          // let j=0;
           for(let i = 0; i < element.length - 1 ; i++){
 
             let indice = this.indiceSimbolo(element[i]);
             estado = this.tabelaT[estado][indice];
+            // j++;
           }
-          
+          //  while (element[j] != '$') {
+          //  }
           if (this.EF[estado] == 1) results.value += `${this.VALID} ${element}\n`;
           else results.value += `${this.sentencaInvalida} ${element}\n`;
           estado = 2;
          }
          else{
-          let res = [];
+          aritmethicSimbol = false;
+          invalidSimbol = false;
            for (let i = 0; i < element.length-1; i++) {
              if (this.aritimeticOperators.includes(element[i]))
-                results.value += `${this.aritimetic} ${element}\n`
+                aritmethicSimbol = true;
              else{
-                if(element[i] != ' ')  results.value+= `${this.simbuloInvalido} ${element}\n`
+                if(element[i] != ' ') invalidSimbol = true;
              }
            }
-           
+           if (aritmethicSimbol = true) results.value += `${this.aritimetic} ${element}\n`;
+           if (invalidSimbol == true) results.value += `${this.simbuloInvalido} ${element}\n`;
          }
       }
     },
