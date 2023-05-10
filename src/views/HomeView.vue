@@ -1,18 +1,17 @@
 <template>
   <div class="container">
-    <input id="input" placeholder="digite o codigo aqui: " class="Input">
+    <input id="input" placeholder="digite o codigo aqui: " value="+ccccc dedede t" class="Input">
     <div class="boxButton">
-      <button @click=" this.clear() ">Limpar</button>
-      <button @click=" this.main() ">Analizar</button>
+      <button @click=" this.clear()">Limpar</button>
+      <button @click=" this.main()">Analizar</button>
     </div>
-    <textarea name="results" id="results" ></textarea>
+    <textarea name="results" id="results"></textarea>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue'
-import {updateExpressionWithTypeArguments} from 'typescript'
+import {routeLocationKey} from 'vue-router'
 
 export default {
   name: 'HomeView',
@@ -27,79 +26,109 @@ export default {
       sentencaInvalida: 'ERRO => sentença inválida',
       simbuloInvalido: 'ERRO => símbolo(s) inválido(s)',
       aritimeticOperators: ['+','-','/','*'],
-      endSentence: ['$','+','-','/','*'],
+      separadores: ['+','-','/','*','$',' '],
+
+
       tabelaT:[
-        [ 11, 11,  6,  9, 11, 11],
-        [ 11, 11, 11,  9, 11, 11 ],
-        [  3, 11,  0,  7, 11, 11 ],
-        [ 11,  4, 11, 11, 11, 11 ],
-        [  5, 11, 11, 11, 11, 11 ],
-        [ 11,  2, 11, 11, 11, 11 ],
-        [ 11, 11,  0,  7, 11, 11 ],
-        [ 11, 11, 11, 11,  1, 11 ],
-        [ 11, 11, 11,  7, 11, 11 ],
-        [ 11, 11, 11, 11,  8, 11 ],
-        [ 11, 11, 11, 11, 11, 11 ],
+    //     A|  B|  C|  D|  E| Er
+  /* 0*/[ 10, 10,  6,  9, 10, 10 ],
+  /* 1*/[ 10, 10, 10,  9, 10, 10 ],
+  /* 2*/[  3, 10,  0,  7, 10, 10 ],
+  /* 3*/[ 10,  4, 10, 10, 10, 10 ],
+  /* 4*/[  5, 10, 10, 10, 10, 10 ],
+  /* 5*/[ 10,  2, 10, 10, 10, 10 ],
+  /* 6*/[ 10, 10,  0,  7, 10, 10 ],
+  /* 7*/[ 10, 10, 10, 10,  1, 10 ],
+  /* 8*/[ 10, 10, 10,  7, 10, 10 ],
+  /* 9*/[ 10, 10, 10, 10,  8, 10 ],
+  /10/[ 10, 10, 10, 10, 10, 10 ],
       ],
       EF: [1,1,0,0,0,0,0,0,0,0,0],
-
-
     };
   },
   methods:{
+    indiceSimbolo: function (simbolo) {
+      if(simbolo == 'a') return 0
+      else if(simbolo == 'b') return 1
+      else if(simbolo == 'c') return 2
+      else if(simbolo == 'd') return 3
+      else if(simbolo == 'e') return 4
+      else return 5
+    },
     getSentencas: function (token){
-
+      console.log(token)
       let sentencas = [];
       let sentenca = '';
+      
       for (let i = 0; i < token.length; i++) {
-        if(!this.endSentence.includes(token.charAt(i))){
-          sentenca +=  token[i];
+        if(this.separadores.includes(token[i])){
+            console.log('ta no else',token[i]);
+
+            console.log(token[i]);
+            sentenca +=  token[i];
+            sentencas.push(sentenca);
+            sentenca = ''; 
         }else{
-          sentenca +=  token[i];
-          sentenca+= '$';
-          sentencas.push(sentenca);
-          sentenca = ''; 
+          sentenca +=  token[i]
         }
       }
       return sentencas;
     },
-    inAlfhabeth: function(sentenca){
-          
-      for(let i = 0; i < sentenca.length - 1 ; i++  ){
-        if (!this.alfabeto.includes(sentenca[i])) {
-          // resposta = `Sentenca Invalida - Simbulo Invalido: ${sentenca}`
-          return false;
+    inAlfhabeth: function ( sentenca ) {
+      sentenca = sentenca.trim();
+      console.log('ta no alfabeto', sentenca, sentenca.length)
+      for(let i = 0; i <= sentenca.length - 1 ; i++  ){
+        if(sentenca[i]!=='$'){
+          if (!this.alfabeto.includes(sentenca[i])) {
+            console.log('nao ta no alfabeto', sentenca)
+            return false;
+          }
         }
       }
       return true;
-      
+    },
+    generic: function ( sentencas ) {
+      const results = document.getElementById('results');
+      let estado = 2;
+      for (const element of sentencas) {
+        if(this.inAlfhabeth(element)){
+
+          for(let i = 0; i < element.length - 1 ; i++){
+
+            let indice = this.indiceSimbolo(element[i]);
+            estado = this.tabelaT[estado][indice];
+          }
+          
+          if (this.EF[estado] == 1) results.value += `${this.VALID} ${element}\n`;
+          else results.value += `${this.sentencaInvalida} ${element}\n`;
+          estado = 2;
+         }
+         else{
+          let res = [];
+           for (let i = 0; i < element.length-1; i++) {
+             if (this.aritimeticOperators.includes(element[i]))
+                results.value += `${this.aritimetic} ${element}\n`
+             else{
+                if(element[i] != ' ')  results.value+= `${this.simbuloInvalido} ${element}\n`
+             }
+           }
+           
+         }
+      }
     },
 
     main:function(){
-      console.clear();
-      console.log(this.tabelaT[2][3])
-      const input = document.getElementById('input');
-      const results = document.getElementById('results');
-      let toke = input.value;
-      
-      const token = toke + "$";
-      const sentencas = this.getSentencas(token);
-      console.log(sentencas);
-      
-      for (let i = 0 ; i < sentencas.length ; i++) {
-        if(!this.inAlfhabeth(sentencas[i])){
-          results.value += `ERRO - Simbulo Invalido: ${sentencas[i]}\n`
-        }
-
-
-
-
-      }
-
     
-      // console.log(retornos)
 
-      // results.value += token
+      console.clear();
+      const input = document.getElementById('input');
+      // const results = document.getElementById('results');
+      let toke = input.value;
+      const token = toke+"$" ;
+      const sentencas = this.getSentencas(token);
+      console.log(sentencas)
+      this.generic(sentencas);
+
     },
     clear:function(){
       document.getElementById('input').value = '';
@@ -111,8 +140,7 @@ export default {
 </script>
 
 <style scoped>
-
-.container{
+.container {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
@@ -121,24 +149,20 @@ export default {
   justify-content: center;
 }
 
-.boxButton{
-
-}
-
 #results {
   width: 100%;
-  min-height: 400px ;
+  min-height: 400px;
   background-color: rgb(251, 218, 175);
   margin-top: 10px;
 }
-.Input{
+
+.Input {
   width: 400px;
   height: 50px;
   border-radius: 20px;
   border: 2px solid rgb(68, 48, 48);
-  font: rgb(0, 0, 0) ;
+  font: rgb(0, 0, 0);
   background-color: rgb(251, 218, 175);
   margin-bottom: 10px;
 }
-
 </style>
