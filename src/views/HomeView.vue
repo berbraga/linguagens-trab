@@ -82,59 +82,58 @@ export default {
       }
       return true;
     },
-generic: function(sentencas) {
-  const results = document.getElementById('results');
-  let estado = 2;
+    generic: function(sentencas) {
+      const results = document.getElementById('results');
+      let estado = 2;
 
-  for (const element of sentencas) {
-    if (!this.inAlfhabeth(element)) {
-      let aritmethicSimbol = false;
-      let invalidSimbol = false;
+      for (const element of sentencas) {
+        if (!this.inAlfhabeth(element)) {
+          let aritmethicSimbol = false;
+          let invalidSimbol = false;
 
-      console.log('ta no else');
-      console.log(element);
+          console.log('ta no else');
+          console.log(element);
 
-      for (let i = 0; i < element.length; i++) {
-        console.log('bernardo');
-        console.log(this.aritimeticOperators.includes(element[i]));
+          for (let i = 0; i < element.length; i++) {
+            console.log('bernardo');
+            console.log(this.aritimeticOperators.includes(element[i]));
 
-        if (this.aritimeticOperators.includes(element[i])) {
-          console.log('simbulo: ', element[i]);
-          aritmethicSimbol = true;
-        } else if (element[i] !== ' ') {
-          invalidSimbol = true;
-          break; // Adicionado para interromper o loop assim que um símbolo inválido for encontrado
+            if (this.aritimeticOperators.includes(element[i])) {
+              console.log('simbulo: ', element[i]);
+              aritmethicSimbol = true;
+            } else if (element[i] !== ' ') {
+              invalidSimbol = true;
+              break; 
+            }
+          }
+          console.log(aritmethicSimbol, invalidSimbol);
+
+          if (aritmethicSimbol && !invalidSimbol) {
+            results.value += `${this.aritimetic} ${element}\n`;
+          } else if (invalidSimbol) {
+            results.value += `${this.simbuloInvalido} ${element}\n`;
+          } else {
+            results.value += `${this.sentencaInvalida} ${element}\n`;
+          }
+        } else {
+          console.log('ta no if');
+          console.log(element);
+
+          for (let i = 0; i < element.length; i++) {
+            let indice = this.indiceSimbolo(element[i]);
+            estado = this.tabelaT[estado][indice];
+          }
+
+          if (this.EF[estado] === 1) {
+            results.value += `${this.VALID} ${element}\n`;
+          } else {
+            results.value += `${this.sentencaInvalida} ${element}\n`;
+          }
+
+          estado = 2;
         }
       }
-
-      console.log(aritmethicSimbol, invalidSimbol);
-
-      if (aritmethicSimbol && !invalidSimbol) {
-        results.value += `${this.aritimetic} ${element}\n`;
-      } else if (invalidSimbol) {
-        results.value += `${this.simbuloInvalido} ${element}\n`;
-      } else {
-        results.value += `${this.sentencaInvalida} ${element}\n`;
-      }
-    } else {
-      console.log('ta no if');
-      console.log(element);
-
-      for (let i = 0; i < element.length; i++) {
-        let indice = this.indiceSimbolo(element[i]);
-        estado = this.tabelaT[estado][indice];
-      }
-
-      if (this.EF[estado] === 1) {
-        results.value += `${this.VALID} ${element}\n`;
-      } else {
-        results.value += `${this.sentencaInvalida} ${element}\n`;
-      }
-
-      estado = 2;
-    }
-  }
-},
+    },
 
     main:function(){
     
