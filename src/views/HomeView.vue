@@ -41,7 +41,7 @@ export default {
   /* 7*/[ 10, 10, 10, 10,  1, 10 ],
   /* 8*/[ 10, 10, 10,  7, 10, 10 ],
   /* 9*/[ 10, 10, 10, 10,  8, 10 ],
-  /10/[ 10, 10, 10, 10, 10, 10 ],
+  /*10*/[ 10, 10, 10, 10, 10, 10 ],
       ],
       EF: [1,1,0,0,0,0,0,0,0,0,0],
     };
@@ -61,17 +61,10 @@ export default {
       let sentenca = '';
       
       for (const element of token) {
-        // console.log(token[i])
         if(this.separadores.includes(element)){
-          // if (token[i] !== ' '){
-            console.log('ta no else',element);
-
-            console.log(element);
             sentenca +=  element;
-            // sentenca += '$';
             sentencas.push(sentenca);
-            sentenca = ''; 
-          // }
+            sentenca = '';  
         }else{
           sentenca +=  element
         }
@@ -80,58 +73,71 @@ export default {
     },
     inAlfhabeth: function(sentenca){
       sentenca = sentenca.trim();
-      console.log('ta no alfabeto', sentenca, sentenca.length)
       for(let i = 0; i <= sentenca.length - 1 ; i++  ){
-        // console.log('nao ta  sentenca')
         if(sentenca[i]!=='$'){
           if (!this.alfabeto.includes(sentenca[i])) {
-            console.log('nao ta no alfabeto', sentenca)
             return false;
           }
         }
       }
       return true;
     },
-    generic: function(sentencas){
-      const results = document.getElementById('results');
-      let estado = 2;
-      let invalidSimbol = false;
-      let aritmethicSimbol = false;
-      for (const element of sentencas) {
-        // console.log('ta no for')
-        if(this.inAlfhabeth(element)){
-          // let j=0;
-          for(let i = 0; i < element.length - 1 ; i++){
+generic: function(sentencas) {
+  const results = document.getElementById('results');
+  let estado = 2;
 
-            let indice = this.indiceSimbolo(element[i]);
-            estado = this.tabelaT[estado][indice];
-            // j++;
-          }
-          //  while (element[j] != '$') {
-          //  }
-          if (this.EF[estado] == 1) results.value += `${this.VALID} ${element}\n`;
-          else results.value += `${this.sentencaInvalida} ${element}\n`;
-          estado = 2;
-         }
-         else{
-          aritmethicSimbol = false;
-          invalidSimbol = false;
-           for (let i = 0; i < element.length-1; i++) {
-             if (this.aritimeticOperators.includes(element[i]))
-                aritmethicSimbol = true;
-             else{
-                if(element[i] != ' ') invalidSimbol = true;
-             }
-           }
-           if (aritmethicSimbol = true) results.value += `${this.aritimetic} ${element}\n`;
-           if (invalidSimbol == true) results.value += `${this.simbuloInvalido} ${element}\n`;
-         }
+  for (const element of sentencas) {
+    if (!this.inAlfhabeth(element)) {
+      let aritmethicSimbol = false;
+      let invalidSimbol = false;
+
+      console.log('ta no else');
+      console.log(element);
+
+      for (let i = 0; i < element.length; i++) {
+        console.log('bernardo');
+        console.log(this.aritimeticOperators.includes(element[i]));
+
+        if (this.aritimeticOperators.includes(element[i])) {
+          console.log('simbulo: ', element[i]);
+          aritmethicSimbol = true;
+        } else if (element[i] !== ' ') {
+          invalidSimbol = true;
+          break; // Adicionado para interromper o loop assim que um símbolo inválido for encontrado
+        }
       }
-    },
+
+      console.log(aritmethicSimbol, invalidSimbol);
+
+      if (aritmethicSimbol && !invalidSimbol) {
+        results.value += `${this.aritimetic} ${element}\n`;
+      } else if (invalidSimbol) {
+        results.value += `${this.simbuloInvalido} ${element}\n`;
+      } else {
+        results.value += `${this.sentencaInvalida} ${element}\n`;
+      }
+    } else {
+      console.log('ta no if');
+      console.log(element);
+
+      for (let i = 0; i < element.length; i++) {
+        let indice = this.indiceSimbolo(element[i]);
+        estado = this.tabelaT[estado][indice];
+      }
+
+      if (this.EF[estado] === 1) {
+        results.value += `${this.VALID} ${element}\n`;
+      } else {
+        results.value += `${this.sentencaInvalida} ${element}\n`;
+      }
+
+      estado = 2;
+    }
+  }
+},
 
     main:function(){
     
-
       console.clear();
       const input = document.getElementById('input');
       // const results = document.getElementById('results');
