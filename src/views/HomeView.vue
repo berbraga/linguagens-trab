@@ -116,16 +116,17 @@ export default {
             results.value += `${this.sentencaInvalida} ${element}\n`;
           }
         } else {
-          console.log('ta no if');
-          console.log(element);
+          // console.log('ta no if');
+          // console.log(element);
 
-          for (let i = 0; i < element.length; i++) {
+          for (let i = 0; i < element.length-1; i++) {
             let indice = this.indiceSimbolo(element[i]);
             estado = this.tabelaT[estado][indice];
           }
-
+          console.log(estado);
           if (this.EF[estado] === 1) {
-            results.value += `${this.VALID} ${element}\n`;
+            
+            results.value +=  `${this.VALID} ${element}\n`;
           } else {
             results.value += `${this.sentencaInvalida} ${element}\n`;
           }
